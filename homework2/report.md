@@ -206,9 +206,26 @@ int main() {
 
 ## 效能分析
 
-時間複雜度：
+**時間複雜度**：
 
-空間複雜度：
+1. Term: $O(1)$ 不包含任何演算法或迴圈，僅在被建立時配置記憶體。
+2. Polynomial(): $O(1)$ 固定配置初始容量為2的動態陣列。
+3. newTerm(const float theCoef, const int theExp): 平均情況： $O(1)$ 當陣列容量足夠時直接放入;最差情況： $O(n)$ 當陣列空間滿了需要擴容時，需透過 copy() 將舊陣列的n個元素複製到新陣列中。
+4. Add(const Polynomial &b): $O(n + m)$ 使用雙指標（aPos 和 bPos）同步掃描多項式 A 與 B。因為每個項次最多被訪問一次，所以時間與兩多項式的項數總和成正比。
+5. Mult(const Polynomial &b): $O(n*m+(總項數)^2)$  雙層迴圈分別走訪n項與m項產生n x m個暫時項，每次呼叫 Add 進行合併時，會隨著多項式項數增加而進行額外的陣列搬移。
+6. Eval(double x): $O(n)$ 使用單層迴圈走訪多項式的 $n$ 個非零項，每次迴圈進行一次 pow() 運算與乘加。
+7. show(): $O(n)$ 需要完整走訪多項式的 $n$ 個非零項並逐一輸出。
+8. main: $O(numA + numB + 操作次數*對應運算複雜度)$ 主要取決於使用者輸入的項數，以及在 while 迴圈中選擇執行 Add、Mult 或 Eval 的次數。
+   
+**空間複雜度**：
+1. Term: $O(1)$ 固定佔用 8 個位元組（32位元指標架構下，float 佔 4 bytes、int 佔 4 bytes，不考慮記憶體對齊）。
+2. Polynomial(): $O(1)$ 固定配置微小的初始記憶體空間。
+3. newTerm(const float theCoef, const int theExp): 平均情況： $O(1)$ ;最差情況： $O(n)$ 擴容時會暫時配置兩倍大小的新記憶體。
+4. Add(const Polynomial &b): $O(n + m)$ 需要建立一個新的多項式物件c來儲存結果，其最多可能包含n + m個非零項。
+5. Mult(const Polynomial &b): $O(n * m)$ 需要額外空間來儲存相乘展開後的各個暫時項以及最終結果多項式。
+6. Eval(double x): $O(1)$ 僅使用常數級別的額外變數(如f)來累積計算結果。
+7. show(): $O(1)$ 僅作串流輸出，無額外資料結構開銷。
+8. main: $O(n + m)$ 主程式中主要宣告了多項式物件 A、B、C、D，其記憶體開銷取決於多項式儲存的項數大小。
 
 ## 測試與驗證
 
